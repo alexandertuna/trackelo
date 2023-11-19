@@ -9,6 +9,8 @@ Elo settings:
 - k-factor: 32
 - Exponent denominator: 400
 - Exponent base: 10
+- Everyone starts with 1000 points
+- Points cannot go below 1000
 
 # Results
 
