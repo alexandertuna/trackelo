@@ -1,5 +1,7 @@
 # trackelo
 
+Thanks Matt for inspiration: https://mattmazzola.medium.com/implementing-the-elo-rating-system-a085f178e065
+
 Current dataset:
 - 2023
 - men's 1500m, mile, and 2000m races
