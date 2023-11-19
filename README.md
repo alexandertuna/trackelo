@@ -9,3 +9,28 @@ Elo settings:
 - k-factor: 32
 - Exponent denominator: 400
 - Exponent base: 10
+
+# Results
+
+```
+Jakob INGEBRIGTSEN             1662
+Yared NUGUSE                   1583
+Josh KERR                      1560
+Reynold Kipkorir CHERUIYOT     1364
+George MILLS                   1363
+Mario GARCÍA                   1338
+Narve Gilje NORDÅS             1332
+Azeddine HABZ                  1259
+Niels LAROS                    1253
+Neil GOURLEY                   1210
+Cole HOCKER                    1207
+Stewart MCSWEYN                1206
+Tshepo TSHITE                  1197
+Charles GRETHEN                1159
+Pietro ARESE                   1149
+Abel KIPSANG                   1148
+Lamecha GIRMA                  1139
+Matthew STONIER                1130
+Adel MECHAAL                   1130
+Isaac NADER                    1100
+```
