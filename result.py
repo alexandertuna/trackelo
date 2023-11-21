@@ -1,26 +1,40 @@
+import calendar
+import sys
+
 import constants
 import utility
 
 class Result:
-    def __init__(self, filename):
-        self.filename = filename
-        self.lines    = self.getLines()
-        self.names    = [self.getName(line) for line in self.lines]
-        self.places   = [self.getPlace(line) for line in self.lines]
+    def __init__(self, racename, date, table):
+        self.racename = racename
+        self.date = date
+        self.datetuple = self.convertDate()
+        self.row_header = table[0]
+        self.row_entries = table[1:]
+        self.names = self.getColumn("Name")
+        self.places = self.getColumn("Place")
+        self.marks = self.getColumn("Mark")
+        self.names, self.places, self.marks = self.removeDnfs()
+        self.places = [int(pl.rstrip(".")) for pl in self.places]
 
-    def getLines(self):
-        lines = []
-        with open(self.filename) as fi:
-            for line in fi:
-                lines.append(line.strip())
-        return lines
+    def getColumn(self, column_name):
+        index = self.row_header.index(column_name)
+        return [row[index] for row in self.row_entries]
 
-    def getName(self, line):
-        # From: 5.	Elliot GILES	26 MAY 1994	GBR
-        # To: Elliot GILES
-        return " ".join(line.split()[constants.LINE_INDEX_NAME : constants.LINE_INDEX_DAY])
+    def removeDnfs(self):
+        names, places, marks = [], [], []
+        for name, place, mark in zip(self.names, self.places, self.marks):
+            if not place:
+                continue
+            names.append(name)
+            places.append(place)
+            marks.append(mark)
+        return names, places, marks
 
-    def getPlace(self, line):
-        # From: 5.	Elliot GILES	26 MAY 1994	GBR
-        # To: 5
-        return int(line.split()[constants.LINE_INDEX_PLACE].rstrip("."))
+    def convertDate(self):
+        month2number = {month.lower(): index for index, month in enumerate(calendar.month_abbr) if month}
+        day, month, year = self.date.split()
+        if "-" in day or "–" in day: # multi-day meet
+            day = day.split("-")[0].split("–")[0]
+        return (int(year), month2number[month.lower()], int(day))
+

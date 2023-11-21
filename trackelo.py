@@ -2,30 +2,75 @@ import math
 
 import athlete
 import constants
+import query
 import result
 import utility
 
 def main():
+
+    # gather results
     results = getResults()
     athletes = getAthletes(results)
 
+    # check each result
     for result in results:
         delo = {}
         for name in result.names:
             delo[name] = calculate(athletes[name], athletes, result)
-        print(f"{result.filename} results")
+        print(f"{result.date} {result.racename} results")
         for name in delo:
             athletes[name].elo += delo[name]
             athletes[name].elo = max(athletes[name].elo, constants.STARTING_ELO)
             print(f" {name:30} -> delta = {int(delo[name])} -> new total = {int(athletes[name].elo)}")
         print("")
 
+    # summarize
     print("Total")
     for name in sorted(athletes, key=lambda name: athletes[name].elo, reverse=True):
         print(f"{name:30} {int(athletes[name].elo)}")
 
 def getResults():
-    return [result.Result(fname) for fname in utility.getDataFileNames()]
+    results = []
+    competitionIds = [
+        7172922,
+        7172925,
+        7172926,
+        7155407,
+        7154228,
+        7155467,
+        7172927,
+        7147656,
+        7154214,
+        7172928,
+
+        7154215,
+        7190105,
+        7154216,
+        7154217,
+
+        7138987,
+
+    ]
+
+    # NB: order is important
+    # They sometimes track the 1500m split of a mile race
+    eventIds = [
+        10229632, # 2000m
+        10229503, # mile
+        10229502, # 1500m
+    ]
+    gender = "M"
+
+    for competitionId in competitionIds:
+        for eventId in eventIds:
+            site = f"https://worldathletics.org/competition/calendar-results/results/{competitionId}?eventId={eventId}&gender={gender}"
+            eventResults = [result.Result(f"{competitionId} {racename}", date, table) for (racename, date, table) in query.query(site)]
+            # championships tend to be in reverse order
+            results.extend(reversed(eventResults))
+            if eventResults:
+                break
+    results = sorted(results, key=lambda result: result.datetuple)
+    return results
 
 def getAthletes(results):
     names = set()
@@ -44,7 +89,6 @@ def calculate(athlete, athletes, result):
         comparison = utility.comparePlaces(place, otherplace)
         change, otherchange = eloResult(athlete, otherathlete, comparison)
         delo += change
-        # print(f"{change}, {otherchange} :: {comparison} :: {athlete.name} from ({place}) vs {othername} ({otherplace})")
     return delo
 
 def eloResult(athlete, otherathlete, comparison):
