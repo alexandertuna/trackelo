@@ -13,6 +13,7 @@ def query(site):
 
 def parse(soup):
     results = []
+    date = getDate(soup)
     for section in soup.find_all("section"):
         eventname = section.h2.string
         for race in section:
@@ -36,8 +37,14 @@ def parse(soup):
                         # print(rows[-1])
             if not racename:
                 continue
-            results.append( (racename, rows) )
+            results.append( (racename, date, rows) )
     return results
+
+def getDate(soup):
+    for calendar in soup.find_all(attrs={"data-name": "eventCalendar-container"}):
+        for h3 in calendar.find_all("h3"):
+            return h3.get_text()
+    fatal("Cannot find date")
 
 def classContains(child, string):
     return any([string in obj for obj in child["class"]])
